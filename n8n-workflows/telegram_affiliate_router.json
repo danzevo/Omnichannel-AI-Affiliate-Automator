@@ -1,0 +1,281 @@
+{
+  "name": "Affiliate-worker",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8000/api/v1/generate-post",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"product_name\": \"TWS Bluetooth Earphones F9-5 Waterproof\",\n  \"product_description\": \"Wireless earbuds with heavy bass, LED power display, 2000mAh charging case which can also be used as a power bank to charge your phone.\",\n  \"price\": \"Rp 45.000\",\n  \"affiliate_link\": \"https://shopee.co.id/example-affiliate-link\",\n  \"marketplace\": \"Shopee\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        608,
+        -144
+      ],
+      "id": "d4c498b5-e9ef-4a7e-a22b-b1bb57a2efeb",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "chatId": "1072535669",
+        "text": "={{ $json.telegram_post }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        832,
+        0
+      ],
+      "id": "cd3c5d3e-c668-43d6-9a0c-326762487e9e",
+      "name": "Send a text message",
+      "webhookId": "5ac573c5-ec1e-4428-b884-65b820216da2",
+      "credentials": {
+        "telegramApi": {
+          "id": "qYiYoX8B7Ms3mzIQ",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -176,
+        -32
+      ],
+      "id": "caab38b0-93da-4857-a289-24cee2c3cdac",
+      "name": "Telegram Trigger",
+      "webhookId": "a655f526-9219-491b-826b-1beba62f2206",
+      "credentials": {
+        "telegramApi": {
+          "id": "qYiYoX8B7Ms3mzIQ",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "{",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    },
+                    "id": "70167874-5bca-49d7-a820-79e935364bfc"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "54b28e39-e74b-4f37-96cf-3338207fae70",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "http",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -48,
+        -128
+      ],
+      "id": "cd191e0e-286b-4fe6-8337-eda0881594f8",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8000/api/v1/process-url",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"url\": \"{{ $json.message.text }}\",\n  \"marketplace\": \"{{ $json.message.text.includes('tokopedia') ? 'Tokopedia' : ($json.message.text.includes('tiktok') ? 'TikTok Shop' : 'Shopee') }}\",\n  \"scraper_type\": \"browserless\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        544,
+        48
+      ],
+      "id": "339d14f9-8274-4613-8c1f-b1eeecba4bbf",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message.chat.id }}",
+        "text": "⏳ Sedang mengecek link dan menulis caption... Tunggu bentar ya Bestie!",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        368,
+        -128
+      ],
+      "id": "36a5d220-b472-4a73-94e8-d5c832bd5f1a",
+      "name": "Send a text message1",
+      "webhookId": "664c65c1-55c1-4a83-96ba-d208e5363e19",
+      "credentials": {
+        "telegramApi": {
+          "id": "qYiYoX8B7Ms3mzIQ",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "⏳ Sedang mengecek link dan menulis caption... Tunggu bentar ya Bestie!",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        160,
+        32
+      ],
+      "id": "5aa54d04-09d4-4847-bdb0-febc5b970cda",
+      "name": "Send a text message2",
+      "webhookId": "9852607e-a250-4cf2-81c1-6fc9349e9afc",
+      "credentials": {
+        "telegramApi": {
+          "id": "qYiYoX8B7Ms3mzIQ",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message2": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "7bdf3e78-9f7b-4881-8f0c-49424bb31e1b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "18e64434879a62d0f53f7a4152df95e0c6f3205bd6e3a9ebd171c3b4964e4afb"
+  },
+  "nodeGroups": [],
+  "id": "rD1kVPTDXuqgXZDa",
+  "tags": []
+}
