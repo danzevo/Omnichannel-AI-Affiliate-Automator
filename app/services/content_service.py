@@ -1,11 +1,40 @@
 from app.adapters.llm_client import LocalLLMClient
 from app.adapters.scraper import webScraper
 from app.schemas.payload import ProductPayload, UrlPayload
+import re
 
 class ContentService:
+    SLANG_REPLACEMENT = {
+        "mendengarkan": "dengerin",
+        "terdengar": "kedengaran",
+        "menggunakan": "pake",
+        "digunakan": "dipake",
+        "dipakai": "dipake", 
+        "mengisi": "nge-charge",
+        "diisi ulang": "di-charge ulang",
+        "merasakan": "ngerasain",
+        "ponsel": "HP",
+        "telepon genggam": "HP",
+        "perangkat": "gadget",
+        "membeli": "beli",
+        "melihat": "liat",
+        "mendapatkan": "dapetin",
+        "memiliki": "punya",
+        "kasus baterai": "Charging Case",
+    }
+
     def __init__(self):
         self.llm = LocalLLMClient()
         self.scraper = webScraper()
+
+    def _apply_slang_fixes(self, text: str) -> str:
+        """Replace formal Indonesian words with Gen-Z slang equivalents."""
+        result = text
+        for formal, slang in self.SLANG_REPLACEMENT.items():
+            # Case-insensitive replacement while preserving sentence flow
+            result = re.sub(re.escape(formal), slang, result, flags=re.IGNORECASE)
+
+        return result
 
     def create_telegram_post(self, product: ProductPayload) -> str:
         system_prompt = (
@@ -17,11 +46,13 @@ class ContentService:
             "1. NEVER use the words 'Saya', 'Kamu', 'Anda', 'Teman-teman', 'Gue', or 'Lo'. "
             "2. DO USE words like 'Aku' (for yourself), 'Kalian' or 'Bestie' (for the audience). "
             "3. Do NOT translate technology words. Always use the English words for 'Charging Case', 'Power Bank', 'Earbuds', 'Wireless', etc. (Never say 'Kasus Baterai'). "
-            "4. Keep paragraphs short, punchy, and use emojis. "
-            "5. You MUST include the actual Price of the product in the text! "
-            "6. Always end with a clear Call to Action and the link. "
-            "7. Generate 5 hashtags at the bottom. "
-            "8. Start directly with an Indonesian hook like 'Spill racun baru nih guys...' or 'Wah nemu harta karun...'.\n\n"
+            "4. Use casual/slang Indonesian verbs. For example use 'dengerin' NOT 'terdengar', use 'ngerasain' NOT 'merasakan', use 'pake' NOT 'menggunakan'. Always prefer informal Gen-Z verb forms. "
+            "5. NEVER use formal Indonesian words like 'mendengarkan', 'mengisi', 'daya', 'diisi ulang', 'menggunakan', 'merasakan'. Always replace with slang equivalents like 'dengerin', 'nge-charge', 'pake', 'ngerasain'. "
+            "6. Keep paragraphs short, punchy, and use emojis. "
+            "7. You MUST include the actual Price of the product in the text! "
+            "8. Always end with a clear Call to Action and the link. "
+            "9. Generate 5 hashtags at the bottom. "
+            "10. Start directly with an Indonesian hook like 'Spill racun baru nih guys...' or 'Wah nemu harta karun...'.\n\n"
             "EXAMPLE VIBE/TONE:\n"
             "Spill racun baru nih guys, aku baru nemu barang sebagus ini harganya cuma [INSERT EXACT PRICE]! 💸\n\n"
             "Kualitasnya oke banget buat dipakai sehari-hari. Fitur andalannya:\n"
@@ -38,8 +69,9 @@ class ContentService:
             - Details: {product.product_description}
             - Link: {product.affiliate_link}
             """
+        raw_text = self.llm.generate_text(system_prompt, user_prompt)
         
-        return self.llm.generate_text(system_prompt, user_prompt)
+        return self._apply_slang_fixes(raw_text)
     
     def create_post_from_url(self, payload: UrlPayload) -> str:
         # 1. Decide which scraper to use dynamically!
@@ -60,11 +92,13 @@ class ContentService:
             "1. NEVER use the words 'Saya', 'Kamu', 'Anda', 'Teman-teman', 'Gue', or 'Lo'. "
             "2. DO USE words like 'Aku' (for yourself), 'Kalian' or 'Bestie' (for the audience). "
             "3. Do NOT translate technology words. Always use the English words for 'Charging Case', 'Power Bank', 'Earbuds', 'Wireless', etc. (Never say 'Kasus Baterai'). "
-            "4. Keep paragraphs short, punchy, and use emojis. "
-            "5. You MUST include the actual Price of the product in the text! "
-            "6. Always end with a clear Call to Action and the link. "
-            "7. Generate 5 hashtags at the bottom. "
-            "8. Start directly with an Indonesian hook like 'Spill racun baru nih guys...' or 'Wah nemu harta karun...'.\n\n"
+            "4. Use casual/slang Indonesian verbs. For example use 'dengerin' NOT 'terdengar', use 'ngerasain' NOT 'merasakan', use 'pake' NOT 'menggunakan'. Always prefer informal Gen-Z verb forms. "
+            "5. NEVER use formal Indonesian words like 'mendengarkan', 'mengisi', 'daya', 'diisi ulang', 'menggunakan', 'merasakan'. Always replace with slang equivalents like 'dengerin', 'nge-charge', 'pake', 'ngerasain'. "
+            "6. Keep paragraphs short, punchy, and use emojis. "
+            "7. You MUST include the actual Price of the product in the text! "
+            "8. Always end with a clear Call to Action and the link. "
+            "9. Generate 5 hashtags at the bottom. "
+            "10. Start directly with an Indonesian hook like 'Spill racun baru nih guys...' or 'Wah nemu harta karun...'.\n\n"
             "EXAMPLE VIBE/TONE:\n"
             "Spill racun baru nih guys, aku baru nemu barang sebagus ini harganya cuma [INSERT EXACT PRICE]! 💸\n\n"
             "Kualitasnya oke banget buat dipakai sehari-hari. Fitur andalannya:\n"
@@ -83,4 +117,6 @@ class ContentService:
         {raw_website_text[:3000]}
         """
 
-        return self.llm.generate_text(system_prompt, user_prompt)
+        raw_text = self.llm.generate_text(system_prompt, user_prompt)
+
+        return self._apply_slang_fixes(raw_text)

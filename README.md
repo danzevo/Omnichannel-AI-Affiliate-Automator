@@ -26,7 +26,7 @@ Omnichannel-AI-Affiliate/
 ```
 
 ## 🏗️ Architecture & Tech Stack
-*   **Workflow Orchestration:** n8n (Node-based automation)
+*   **Workflow Orchestration:** n8n v2.x (Node-based automation)
 *   **Backend Worker:** Python 3, FastAPI, Pydantic
 *   **Web Scraping:** Browserless (Headless Chromium REST API), BeautifulSoup4
 *   **AI / LLM:** Local Llama 3.1 8B (via LM Studio)
@@ -63,7 +63,19 @@ uvicorn app.main:app --reload
 ```
 
 ### 2. n8n Workflow Setup
-1. Open your local n8n instance.
-2. Click **Import from File** and select `n8n-workflows/telegram_affiliate_router.json`.
-3. Configure your Telegram Credentials inside the Telegram Trigger node.
-4. Activate the workflow!
+1. Install n8n globally (requires Node.js 20 LTS):
+```bash
+npm install -g n8n
+```
+2. Start a tunnel to expose your local n8n (e.g., using Cloudflare Tunnel):
+```bash
+npm install -g cloudflared
+cloudflared tunnel --url http://localhost:5678
+```
+3. Start n8n with the tunnel URL:
+```bash
+NODE_TLS_REJECT_UNAUTHORIZED=0 WEBHOOK_URL=https://<your-tunnel-url> n8n start
+```
+4. Open `http://localhost:5678`, click **Import from File** and select `n8n-workflows/telegram_affiliate_router.json`.
+5. Configure your Telegram Credentials inside the Telegram Trigger node.
+6. Activate the workflow!

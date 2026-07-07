@@ -13,10 +13,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        608,
-        -144
+        0,
+        0
       ],
-      "id": "d4c498b5-e9ef-4a7e-a22b-b1bb57a2efeb",
+      "id": "29d9210c-2807-4d33-bc3f-b46dd0e3fdf1",
       "name": "HTTP Request"
     },
     {
@@ -28,38 +28,15 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        832,
-        0
+        224,
+        144
       ],
-      "id": "cd3c5d3e-c668-43d6-9a0c-326762487e9e",
+      "id": "802a8fd7-42cb-4f9a-a707-48339e79ce11",
       "name": "Send a text message",
       "webhookId": "5ac573c5-ec1e-4428-b884-65b820216da2",
       "credentials": {
         "telegramApi": {
-          "id": "qYiYoX8B7Ms3mzIQ",
-          "name": "Telegram account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "updates": [
-          "message"
-        ],
-        "additionalFields": {}
-      },
-      "type": "n8n-nodes-base.telegramTrigger",
-      "typeVersion": 1.3,
-      "position": [
-        -176,
-        -32
-      ],
-      "id": "caab38b0-93da-4857-a289-24cee2c3cdac",
-      "name": "Telegram Trigger",
-      "webhookId": "a655f526-9219-491b-826b-1beba62f2206",
-      "credentials": {
-        "telegramApi": {
-          "id": "qYiYoX8B7Ms3mzIQ",
+          "id": "GTonYayyG8uDqaq7",
           "name": "Telegram account"
         }
       }
@@ -119,10 +96,10 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
       "position": [
-        -48,
-        -128
+        -656,
+        16
       ],
-      "id": "cd191e0e-286b-4fe6-8337-eda0881594f8",
+      "id": "2231cb9c-b91a-4681-9dd2-efdc67f99860",
       "name": "Switch"
     },
     {
@@ -137,10 +114,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        544,
-        48
+        -64,
+        192
       ],
-      "id": "339d14f9-8274-4613-8c1f-b1eeecba4bbf",
+      "id": "1677db25-816a-410e-b571-49e569f59924",
       "name": "HTTP Request1"
     },
     {
@@ -152,15 +129,15 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        368,
-        -128
+        -240,
+        16
       ],
-      "id": "36a5d220-b472-4a73-94e8-d5c832bd5f1a",
+      "id": "b8b4891e-a744-4bb0-b4bf-7875b92214b6",
       "name": "Send a text message1",
       "webhookId": "664c65c1-55c1-4a83-96ba-d208e5363e19",
       "credentials": {
         "telegramApi": {
-          "id": "qYiYoX8B7Ms3mzIQ",
+          "id": "GTonYayyG8uDqaq7",
           "name": "Telegram account"
         }
       }
@@ -174,15 +151,38 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        160,
-        32
+        -448,
+        176
       ],
-      "id": "5aa54d04-09d4-4847-bdb0-febc5b970cda",
+      "id": "9b5d08ee-8725-4901-a936-4c709002ceb7",
       "name": "Send a text message2",
       "webhookId": "9852607e-a250-4cf2-81c1-6fc9349e9afc",
       "credentials": {
         "telegramApi": {
-          "id": "qYiYoX8B7Ms3mzIQ",
+          "id": "GTonYayyG8uDqaq7",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -880,
+        32
+      ],
+      "id": "131d6142-b7a1-4d7f-8fcb-65e4b71616c9",
+      "name": "Telegram Trigger",
+      "webhookId": "f8156548-4663-4dfb-88ed-279e35a2c3f9",
+      "credentials": {
+        "telegramApi": {
+          "id": "GTonYayyG8uDqaq7",
           "name": "Telegram account"
         }
       }
@@ -195,17 +195,6 @@
         [
           {
             "node": "Send a text message",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Telegram Trigger": {
-      "main": [
-        [
-          {
-            "node": "Switch",
             "type": "main",
             "index": 0
           }
@@ -262,20 +251,30 @@
           }
         ]
       ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "active": true,
+  "active": false,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "7bdf3e78-9f7b-4881-8f0c-49424bb31e1b",
+  "versionId": "c95c4791-01df-4000-aba0-c283b1ddc9be",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "18e64434879a62d0f53f7a4152df95e0c6f3205bd6e3a9ebd171c3b4964e4afb"
   },
-  "nodeGroups": [],
-  "id": "rD1kVPTDXuqgXZDa",
+  "id": "iSrPohSLY5gp9uUD",
   "tags": []
 }
